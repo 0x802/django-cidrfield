@@ -25,6 +25,8 @@ class IPNetworkField(models.Field):
             raise ValidationError(error)
 
     def from_db_value(self, value, expression, connection):
+        value = value.strip()
+        
         if value is None or len(value) < 5:
             return None
         prefix = value[:4]
@@ -38,8 +40,11 @@ class IPNetworkField(models.Field):
         return ipaddress.ip_network(string_network)
 
     def _get_prep_value(self, value):
+        value = value.strip()
+        
         if value is None or value == '':
             return None
+        
         try:
             value = self.to_python(value)
         except ValidationError:
@@ -58,6 +63,8 @@ class IPNetworkField(models.Field):
         return bin_network
 
     def get_prep_value(self, value):
+        value = value.strip()
+        
         if isinstance(value, list):
             return [self._get_prep_value(v) for v in value]
         else:
